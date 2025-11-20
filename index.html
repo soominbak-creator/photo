@@ -131,13 +131,6 @@
       box-shadow: 0 10px 20px rgba(79,140,255,0.35);
     }
 
-    .hint {
-      margin-top: 6px;
-      font-size: 11px;
-      color: #696f7f;
-      text-align: left;
-    }
-
     #image-container {
       display: none;
       width: 100%;
@@ -151,33 +144,22 @@
       max-width: 100%;
       max-height: 100%;
     }
-
-    @media (max-width: 480px) {
-      .card {
-        width: calc(100% - 40px);
-        padding: 26px 24px;
-      }
-      .title {
-        font-size: 20px;
-      }
-    }
   </style>
 </head>
 <body>
 
 <div id="password-box" class="card">
   <div class="logo"><span>KNU</span>&nbsp;MOBILITY</div>
-  <div class="title">접근 인증</div>
+  <div class="title">주문 인증</div>
   <div class="subtitle">
-    지정된 사용자만 이미지를 확인할 수 있습니다.<br>
-    비밀번호를 입력해 주세요.
+    배달 앱에서 발급된<br>
+    <strong>1회용 비밀번호</strong>를 입력해 주세요.
   </div>
 
   <div class="field">
-    <label for="pw">비밀번호</label>
-    <input type="password" id="pw" placeholder="Enter password">
-    <button onclick="checkPassword()">Continue</button>
-    <div class="hint">* 비밀번호를 모르면 담당자에게 문의하세요.</div>
+    <label for="pw">1회용 비밀번호</label>
+    <input type="password" id="pw" placeholder="Password">
+    <button onclick="checkPassword()">확인</button>
   </div>
 </div>
 
@@ -188,7 +170,7 @@
 <script>
   function checkPassword() {
     const input = document.getElementById("pw").value.trim();
-    const realPw = "1121"; // ← 여기 원하는 비밀번호로 변경
+    const realPw = "1121"; // ← 원하는 비밀번호로 변경
 
     if (input === realPw) {
       document.getElementById("password-box").style.display = "none";
@@ -198,7 +180,7 @@
     }
   }
 
-  // 엔터키로도 확인되게
+  // 엔터로도 인증
   document.getElementById("pw").addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
       checkPassword();
