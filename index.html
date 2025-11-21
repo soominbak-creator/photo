@@ -6,9 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
-      --bg-color: #05060a;
-      --card-color: #0f1117;
       --accent: #4f8cff;
+      --bg: #05060a;
       --text-main: #f5f5f5;
       --text-sub: #9ea3b0;
     }
@@ -25,16 +24,13 @@
     }
 
     .card {
-      background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(0,0,0,0.5));
+      background: rgba(255,255,255,0.04);
       border-radius: 18px;
       padding: 40px 48px;
       width: 380px;
-      max-width: 90%;
-      box-shadow:
-        0 18px 40px rgba(0,0,0,0.8),
-        0 0 0 1px rgba(255,255,255,0.02);
+      max-width: 92%;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.8);
       backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -47,21 +43,12 @@
     }
     .logo span { color: var(--accent); font-weight: 600; }
 
-    .title {
-      font-size: 24px;
-      font-weight: 600;
-    }
+    .title { font-size: 24px; font-weight: 600; }
 
     .subtitle {
       font-size: 15px;
       color: var(--text-sub);
       line-height: 1.7;
-    }
-
-    label {
-      font-size: 14px;
-      margin-bottom: 6px;
-      color: var(--text-sub);
     }
 
     input {
@@ -76,7 +63,6 @@
 
     button {
       padding: 16px;
-      margin-top: 10px;
       font-size: 18px;
       border-radius: 999px;
       border: none;
@@ -87,19 +73,26 @@
       cursor: pointer;
     }
 
-    /* ⭐ 모바일 최적화 */
-    @media (max-width: 480px) {
-      .card {
-        width: 92%;
-        padding: 38px 32px;
-        gap: 22px;
-      }
-      .logo { font-size: 18px; }
-      .title { font-size: 22px; }
-      .subtitle { font-size: 14px; }
-      input { padding: 16px; font-size: 17px; }
-      button { font-size: 17px; padding: 15px; }
+    /* 주문자 확인 중 화면 */
+    #unlock-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      font-size: 20px;
+      color: var(--text-main);
     }
+
+    .spinner {
+      width: 38px;
+      height: 38px;
+      border: 4px solid rgba(255,255,255,0.15);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     #image-container {
       display: none;
@@ -118,6 +111,7 @@
 </head>
 <body>
 
+<!-- 비밀번호 입력 화면 -->
 <div id="password-box" class="card">
   <div class="logo"><span>KNU</span>&nbsp;MOBILITY</div>
   <div class="title">주문 인증</div>
@@ -126,12 +120,17 @@
     <strong>1회용 비밀번호</strong>를 입력해 주세요.
   </div>
 
-  <label for="pw">1회용 비밀번호</label>
   <input type="password" id="pw" placeholder="Password">
   <button onclick="checkPassword()">확인</button>
-
 </div>
 
+<!-- 주문자 확인 중 화면 -->
+<div id="unlock-screen">
+  <div class="spinner"></div>
+  <div>주문자 확인 중…</div>
+</div>
+
+<!-- 이미지 화면 -->
 <div id="image-container">
   <img src="치킨.jpg">
 </div>
@@ -139,15 +138,26 @@
 <script>
   function checkPassword() {
     const input = document.getElementById("pw").value.trim();
-    const realPw = "1121";
+    const realPw = "1121"; // 원하는 비번으로 변경 가능
+
     if (input === realPw) {
+      // 1) 비밀번호 박스 숨기기
       document.getElementById("password-box").style.display = "none";
-      document.getElementById("image-container").style.display = "flex";
+
+      // 2) "주문자 확인 중" 화면 표시
+      document.getElementById("unlock-screen").style.display = "flex";
+
+      // 3) 0.9초 후 치킨 이미지 표시
+      setTimeout(() => {
+        document.getElementById("unlock-screen").style.display = "none";
+        document.getElementById("image-container").style.display = "flex";
+      }, 900);
     } else {
       alert("비밀번호가 틀렸습니다.");
     }
   }
 
+  // 엔터키 지원
   document.getElementById("pw").addEventListener("keydown", function(e) {
     if (e.key === "Enter") checkPassword();
   });
