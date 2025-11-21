@@ -11,6 +11,7 @@
       --text-main: #f5f5f5;
       --text-sub: #9ea3b0;
       --success: #4fcc7f;
+      --error: #ff5f5f;
     }
 
     body {
@@ -73,9 +74,10 @@
       cursor: pointer;
     }
 
-    /* 주문자 확인 중 화면 */
-    #unlock-screen, 
-    #success-screen {
+    /* 주문자 확인 중 */
+    #unlock-screen,
+    #success-screen,
+    #error-screen {
       display: none;
       flex-direction: column;
       align-items: center;
@@ -84,7 +86,6 @@
       color: var(--text-main);
     }
 
-    /* 로딩 스피너 */
     .spinner {
       width: 38px;
       height: 38px;
@@ -95,7 +96,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* 체크 애니메이션 */
+    /* 체크 */
     .checkmark {
       width: 60px;
       height: 60px;
@@ -108,7 +109,6 @@
       opacity: 0;
       transform: scale(0.5);
     }
-
     @keyframes pop {
       to {
         opacity: 1;
@@ -123,6 +123,28 @@
       stroke-width: 4;
       stroke-linecap: round;
       stroke-linejoin: round;
+      fill: none;
+    }
+
+    /* 오류 X 표시 */
+    .error-x {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--error);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: pop 0.4s ease-out forwards;
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    .error-x svg {
+      width: 34px;
+      height: 34px;
+      stroke: white;
+      stroke-width: 4;
+      stroke-linecap: round;
       fill: none;
     }
 
@@ -162,17 +184,28 @@
   <div>주문자 확인 중…</div>
 </div>
 
-<!-- 확인 완료 체크 화면 -->
+<!-- 확인 완료 화면 -->
 <div id="success-screen">
   <div class="checkmark">
     <svg viewBox="0 0 24 24">
       <polyline points="20 6 9 17 4 12" />
     </svg>
   </div>
-  <div style="font-size: 20px; margin-top: 6px;">확인 완료</div>
+  <div>확인 완료</div>
 </div>
 
-<!-- 이미지 화면 -->
+<!-- 비밀번호 오류 화면 -->
+<div id="error-screen">
+  <div class="error-x">
+    <svg viewBox="0 0 24 24">
+      <line x1="6" y1="6" x2="18" y2="18" />
+      <line x1="18" y1="6" x2="6" y2="18" />
+    </svg>
+  </div>
+  <div style="font-size: 19px; margin-top: 6px;">일치하지 않습니다</div>
+</div>
+
+<!-- 최종 이미지 화면 -->
 <div id="image-container">
   <img src="치킨.jpg">
 </div>
@@ -182,28 +215,35 @@
     const input = document.getElementById("pw").value.trim();
     const realPw = "1121";
 
-    if (input === realPw) {
-      // 1) 비밀번호 입력 화면 숨기기
-      document.getElementById("password-box").style.display = "none";
+    // 입력 화면 숨기고 로딩 화면
+    document.getElementById("password-box").style.display = "none";
+    document.getElementById("unlock-screen").style.display = "flex";
 
-      // 2) 주문자 확인 중 화면 표시
-      document.getElementById("unlock-screen").style.display = "flex";
+    setTimeout(() => {
+      document.getElementById("unlock-screen").style.display = "none";
 
-      // 3) 0.8초 후 체크 애니메이션 화면 전환
-      setTimeout(() => {
-        document.getElementById("unlock-screen").style.display = "none";
+      if (input === realPw) {
+        // 성공
         document.getElementById("success-screen").style.display = "flex";
-      }, 800);
 
-      // 4) 체크 화면 0.6초 후 최종 이미지 표시
-      setTimeout(() => {
-        document.getElementById("success-screen").style.display = "none";
-        document.getElementById("image-container").style.display = "flex";
-      }, 1400);
+        setTimeout(() => {
+          document.getElementById("success-screen").style.display = "none";
+          document.getElementById("image-container").style.display = "flex";
+        }, 600);
 
-    } else {
-      alert("비밀번호가 틀렸습니다.");
-    }
+      } else {
+        // 실패
+        document.getElementById("error-screen").style.display = "flex";
+
+        setTimeout(() => {
+          document.getElementById("error-screen").style.display = "none";
+          document.getElementById("password-box").style.display = "flex";
+          document.getElementById("pw").value = "";
+          document.getElementById("pw").focus();
+        }, 1200);
+      }
+
+    }, 800);
   }
 
   document.getElementById("pw").addEventListener("keydown", function(e) {
