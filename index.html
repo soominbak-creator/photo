@@ -10,6 +10,7 @@
       --bg: #05060a;
       --text-main: #f5f5f5;
       --text-sub: #9ea3b0;
+      --success: #4fcc7f;
     }
 
     body {
@@ -69,12 +70,12 @@
       background: var(--accent);
       color: white;
       font-weight: 500;
-      letter-spacing: 0.05em;
       cursor: pointer;
     }
 
     /* 주문자 확인 중 화면 */
-    #unlock-screen {
+    #unlock-screen, 
+    #success-screen {
       display: none;
       flex-direction: column;
       align-items: center;
@@ -83,6 +84,7 @@
       color: var(--text-main);
     }
 
+    /* 로딩 스피너 */
     .spinner {
       width: 38px;
       height: 38px;
@@ -91,8 +93,38 @@
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* 체크 애니메이션 */
+    .checkmark {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--success);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: pop 0.4s ease-out forwards;
+      opacity: 0;
+      transform: scale(0.5);
+    }
+
+    @keyframes pop {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .checkmark svg {
+      width: 32px;
+      height: 32px;
+      stroke: white;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
 
     #image-container {
       display: none;
@@ -130,6 +162,16 @@
   <div>주문자 확인 중…</div>
 </div>
 
+<!-- 확인 완료 체크 화면 -->
+<div id="success-screen">
+  <div class="checkmark">
+    <svg viewBox="0 0 24 24">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  </div>
+  <div style="font-size: 20px; margin-top: 6px;">확인 완료</div>
+</div>
+
 <!-- 이미지 화면 -->
 <div id="image-container">
   <img src="치킨.jpg">
@@ -138,26 +180,32 @@
 <script>
   function checkPassword() {
     const input = document.getElementById("pw").value.trim();
-    const realPw = "1121"; // 원하는 비번으로 변경 가능
+    const realPw = "1121";
 
     if (input === realPw) {
-      // 1) 비밀번호 박스 숨기기
+      // 1) 비밀번호 입력 화면 숨기기
       document.getElementById("password-box").style.display = "none";
 
-      // 2) "주문자 확인 중" 화면 표시
+      // 2) 주문자 확인 중 화면 표시
       document.getElementById("unlock-screen").style.display = "flex";
 
-      // 3) 0.9초 후 치킨 이미지 표시
+      // 3) 0.8초 후 체크 애니메이션 화면 전환
       setTimeout(() => {
         document.getElementById("unlock-screen").style.display = "none";
+        document.getElementById("success-screen").style.display = "flex";
+      }, 800);
+
+      // 4) 체크 화면 0.6초 후 최종 이미지 표시
+      setTimeout(() => {
+        document.getElementById("success-screen").style.display = "none";
         document.getElementById("image-container").style.display = "flex";
-      }, 900);
+      }, 1400);
+
     } else {
       alert("비밀번호가 틀렸습니다.");
     }
   }
 
-  // 엔터키 지원
   document.getElementById("pw").addEventListener("keydown", function(e) {
     if (e.key === "Enter") checkPassword();
   });
